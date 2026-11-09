@@ -5,6 +5,7 @@ from pathlib import Path
 
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
@@ -30,6 +31,7 @@ app = FastAPI(title="Retailer Ordering API", version="1.0.0", lifespan=lifespan,
               docs_url="/api/docs" if settings.env != "production" else None, redoc_url=None,
               openapi_url="/api/openapi.json" if settings.env != "production" else None)
 install_error_handlers(app)
+app.add_middleware(GZipMiddleware, minimum_size=500)
 app.add_middleware(CORSMiddleware, allow_origins=settings.cors_origins, allow_credentials=False,
                    allow_methods=["GET", "POST", "PATCH", "DELETE"], allow_headers=["Authorization", "Content-Type"])
 
@@ -42,6 +44,8 @@ async def security_headers(request: Request, call_next):
     resp.headers.setdefault("Referrer-Policy", "same-origin")
     if request.url.path.startswith("/api"):
         resp.headers.setdefault("Cache-Control", "no-store")
+    elif request.url.path.startswith("/assets/"):          # content-hashed filenames: safe to cache for a year
+        resp.headers.setdefault("Cache-Control", "public, max-age=31536000, immutable")
     return resp
 
 

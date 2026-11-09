@@ -1,0 +1,196 @@
+{
+ "parse": {
+  "parse_id": 1,
+  "mode": "fallback",
+  "fallback_reason": "No LLM API key configured",
+  "model": null,
+  "original_message": "bhaiya 5 peti biscuit chhota, 2 peti washing powder 1 kilo, chai patti 250 wala 1 peti",
+  "lines": [
+   {
+    "line_id": "l1",
+    "original_phrase": "5 peti biscuit chhota",
+    "sku": "SKU-BS-075",
+    "product_name": "Glucose biscuit 75 g",
+    "quantity": 5,
+    "raw_quantity": 5.0,
+    "unit": "case",
+    "packaging": "Case of 96",
+    "confidence": 0.95,
+    "match_source": "keyword",
+    "alternatives": [
+     {
+      "sku": "SKU-DT-1KG",
+      "name": "Detergent powder 1 kg"
+     },
+     {
+      "sku": "SKU-TE-250",
+      "name": "Tea leaf 250 g"
+     }
+    ],
+    "validation_status": "ok",
+    "clarification": null,
+    "messages": [],
+    "stock_cases": 340,
+    "free_cases": 0,
+    "line_total_paise": 388800
+   },
+   {
+    "line_id": "l2",
+    "original_phrase": "2 peti washing powder 1 kilo",
+    "sku": "SKU-DT-1KG",
+    "product_name": "Detergent powder 1 kg",
+    "quantity": 2,
+    "raw_quantity": 2.0,
+    "unit": "case",
+    "packaging": "Case of 20",
+    "confidence": 0.95,
+    "match_source": "keyword",
+    "alternatives": [
+     {
+      "sku": "SKU-BS-075",
+      "name": "Glucose biscuit 75 g"
+     },
+     {
+      "sku": "SKU-TE-250",
+      "name": "Tea leaf 250 g"
+     }
+    ],
+    "validation_status": "ok",
+    "clarification": null,
+    "messages": [],
+    "stock_cases": 85,
+    "free_cases": 0,
+    "line_total_paise": 406000
+   },
+   {
+    "line_id": "l3",
+    "original_phrase": "chai patti 250 wala 1 peti",
+    "sku": "SKU-TE-250",
+    "product_name": "Tea leaf 250 g",
+    "quantity": 1,
+    "raw_quantity": 1.0,
+    "unit": "case",
+    "packaging": "Case of 40",
+    "confidence": 0.95,
+    "match_source": "keyword",
+    "alternatives": [
+     {
+      "sku": "SKU-BS-075",
+      "name": "Glucose biscuit 75 g"
+     },
+     {
+      "sku": "SKU-DT-1KG",
+      "name": "Detergent powder 1 kg"
+     }
+    ],
+    "validation_status": "out_of_stock",
+    "clarification": null,
+    "messages": [
+     "Out of stock. Remove this line or pick another product."
+    ],
+    "stock_cases": 0,
+    "free_cases": 0,
+    "line_total_paise": 472000
+   }
+  ]
+ },
+ "quote_all": {
+  "lines": [
+   {
+    "sku": "SKU-BS-075",
+    "product_name": "Glucose biscuit 75 g",
+    "quantity_cases": 5,
+    "free_cases": 0,
+    "case_price_paise": 77760,
+    "gross_paise": 388800,
+    "discount_paise": 0,
+    "line_total_paise": 388800,
+    "scheme_applied": null,
+    "issues": []
+   },
+   {
+    "sku": "SKU-DT-1KG",
+    "product_name": "Detergent powder 1 kg",
+    "quantity_cases": 2,
+    "free_cases": 0,
+    "case_price_paise": 203000,
+    "gross_paise": 406000,
+    "discount_paise": 0,
+    "line_total_paise": 406000,
+    "scheme_applied": null,
+    "issues": []
+   },
+   {
+    "sku": "SKU-TE-250",
+    "product_name": "Tea leaf 250 g",
+    "quantity_cases": 1,
+    "free_cases": 0,
+    "case_price_paise": 472000,
+    "gross_paise": 472000,
+    "discount_paise": 0,
+    "line_total_paise": 472000,
+    "scheme_applied": null,
+    "issues": [
+     {
+      "code": "OUT_OF_STOCK",
+      "message": "Tea leaf 250 g is out of stock."
+     }
+    ]
+   }
+  ],
+  "subtotal_paise": 1266800,
+  "discount_paise": 0,
+  "total_paise": 1266800,
+  "free_cases": 0,
+  "can_order": false,
+  "credit": {
+   "credit_limit_paise": 7500000,
+   "outstanding_paise": 1850000,
+   "open_orders_paise": 0,
+   "available_paise": 5650000,
+   "is_demo_data": true
+  },
+  "credit_ok": true
+ },
+ "quote_ok": {
+  "lines": [
+   {
+    "sku": "SKU-BS-075",
+    "product_name": "Glucose biscuit 75 g",
+    "quantity_cases": 5,
+    "free_cases": 0,
+    "case_price_paise": 77760,
+    "gross_paise": 388800,
+    "discount_paise": 0,
+    "line_total_paise": 388800,
+    "scheme_applied": null,
+    "issues": []
+   },
+   {
+    "sku": "SKU-DT-1KG",
+    "product_name": "Detergent powder 1 kg",
+    "quantity_cases": 2,
+    "free_cases": 0,
+    "case_price_paise": 203000,
+    "gross_paise": 406000,
+    "discount_paise": 0,
+    "line_total_paise": 406000,
+    "scheme_applied": null,
+    "issues": []
+   }
+  ],
+  "subtotal_paise": 794800,
+  "discount_paise": 0,
+  "total_paise": 794800,
+  "free_cases": 0,
+  "can_order": true,
+  "credit": {
+   "credit_limit_paise": 7500000,
+   "outstanding_paise": 1850000,
+   "open_orders_paise": 0,
+   "available_paise": 5650000,
+   "is_demo_data": true
+  },
+  "credit_ok": true
+ }
+}
