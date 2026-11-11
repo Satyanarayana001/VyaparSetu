@@ -32,6 +32,7 @@ npm install
 npm run dev          # http://localhost:5173 (dev proxy forwards /api to http://localhost:8000)
 npm run build        # production build to frontend/dist
 npm test             # Vitest
+CHROME_PATH=/path/to/chrome npm run e2e    # browser E2E against a running backend that serves the built UI (see README)
 ```
 
 ## Environment variables (names only)
@@ -53,7 +54,7 @@ export LLM_PROVIDER=anthropic LLM_API_KEY=... LLM_MODEL=<model name>
 ```
 The model only extracts candidate lines; the backend validates every SKU, quantity, stock level and price, and the retailer must
 confirm. On timeout, rate limit, API error or invalid output the app falls back to the rule-based parser and shows why.
-**The live-model path was tested only with stubbed HTTP/provider responses, not against a real provider.**
+**The live-model path was tested only against a local mock server that speaks the OpenAI-compatible and Anthropic wire formats (real HTTP client code, mock model), never against a real provider. No LLM key was available.**
 
 ## Deploying (single service, e.g. Render / Railway / a VM) - not executed
 The API can serve the built frontend, so one service gives one origin (no CORS needed).
@@ -75,15 +76,16 @@ In production mode (`APP_ENV=production`) `/api/docs` and the OpenAPI schema are
 
 ## Known limitations
 - **Not deployed**; no live URL. No CI.
-- **No visual/browser verification** was possible in the build environment (no headless browser). The UI was verified by
-  type-checking, jsdom component/flow tests, and by exercising the same API the UI calls. Please click through it once.
+- **Browser verification was done in headless desktop Chromium** (phone-sized viewports, touch emulation): 24-step E2E,
+  touch-target and overflow audits, screenshots. It was **not** run on real phones, Safari or Firefox.
 - AI: rule-based fallback understands common aliases for the three supplied products only; the real LLM path is untested against a live provider.
 - **Text only.** Hindi voice notes and handwritten-list photos are not implemented. No offline AI.
 - **Salesman screens and offline draft sync are not built** (the salesman role, assignment model and authorised API access exist).
-- PWA: manifest, icons and an app-shell service worker are included; installability was not verified on a device. The app
+- PWA: manifest, icons and an app-shell service worker are included; installability was not verified on a device or in Lighthouse. The app
   does not work offline (ordering needs the server); API responses are never cached.
 - Hindi/English UI toggle covers the interface; server-generated messages (validation, AI notes) are English only.
-- Performance numbers are build-time measurements (JS ~76 KB gzipped); "first load under 3 s on slow 3G" was **not measured**.
+- Performance (emulated, not a real device or network): Slow 3G (400 kbps, 400 ms latency) + 4x CPU throttle, cold cache: first paint
+  ~1.3 s, login form usable ~2.6-2.8 s (JS 77 KB gzip / 67 KB Brotli). Real HTTPS adds TLS round trips; the margin to 3 s is small.
 - Auth token is kept in `sessionStorage` (cleared when the tab closes); no refresh tokens, password reset, or 2FA.
 - Login throttling is in-memory (single process). SQLite, no migrations. Credit is demo data with no real credit/banking integration.
 - No GST calculation: the brief does not specify GST treatment (shown in the UI as unspecified).

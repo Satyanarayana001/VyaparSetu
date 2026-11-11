@@ -32,9 +32,13 @@ Demo logins (synthetic, local only; one-click buttons appear on the sign-in scre
 ## Tests
 
 ```bash
-cd backend && source .venv/bin/activate && python -m pytest -q     # 97 tests
-cd frontend && npm test                                            # 16 tests
-cd frontend && npm run build                                       # type-checks, then builds
+cd backend && source .venv/bin/activate && python -m pytest -q     # 107 tests (incl. mock-LLM-server HTTP tests)
+cd frontend && npm test                                            # 16 tests (jsdom)
+cd frontend && npm run build                                       # type-checks, builds, writes Brotli copies
+
+# Browser end-to-end: 24 steps in real Chromium. It MUTATES the demo DB, so reset the seed afterwards.
+cd backend && python -m app.seed --reset && uvicorn app.main:app --port 8000   # also serves the built UI
+cd frontend && CHROME_PATH="/path/to/chrome" npm run e2e
 ```
 
 ## 5-minute demo script
@@ -48,7 +52,7 @@ cd frontend && npm run build                                       # type-checks
 6. As retailer1 again, read a message using those words: the saved alias is used (marked "Your saved word").
 7. As **retailer2**, order 3 cases of detergent: the backend refuses it (credit limit), demonstrating the credit hold.
 
-AI mode: with no `LLM_API_KEY` the UI says **"Basic reader (no AI model connected)"** (rule-based fallback). See `deployment.md` to connect a model.
+AI mode: no LLM is configured in the submitted build, so it runs the rule-based reader. With no `LLM_API_KEY` the UI says **"Basic reader (no AI model connected)"** (rule-based fallback). See `deployment.md` to connect a model.
 
 ## Repository layout
 
