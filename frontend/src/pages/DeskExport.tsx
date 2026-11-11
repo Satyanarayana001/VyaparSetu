@@ -13,14 +13,14 @@ export default function DeskExport() {
   const { t, lang } = useI18n();
   const qc = useQueryClient();
   const [includeExported, setIncludeExported] = useState(false);
-  const [picked, setPicked] = useState<Set<number>>(new Set());
+  const [picked, setPicked] = useState<Set<number> | null>(null);   // null = untouched: every exportable order is pre-selected
   const q = useQuery({ queryKey: ["desk-orders", "confirmed", ""], queryFn: () => get<{ orders: OrderSummary[]; counts: Record<OrderStatus, number> }>("/desk/orders?status=confirmed&limit=200") });
   const rows = (q.data?.orders ?? []).filter((o) => includeExported || !o.exported_at);
-  const effective = rows.filter((o) => picked.has(o.id));
+  const effective = rows.filter((o) => (picked ? picked.has(o.id) : !o.exported_at));
   const allOn = rows.length > 0 && effective.length === rows.length;
   const exp = useMutation({
     mutationFn: () => downloadPost("/desk/export/tally", { order_ids: effective.map((o) => o.id) }, "tally-orders.csv"),
-    onSuccess: () => { setPicked(new Set()); qc.invalidateQueries({ queryKey: ["desk-orders"] }); },
+    onSuccess: () => { setPicked(null); qc.invalidateQueries({ queryKey: ["desk-orders"] }); },
   });
   const sum = effective.reduce((a, o) => a + o.total_paise, 0);
   return (
@@ -37,7 +37,7 @@ export default function DeskExport() {
           rows.length === 0 ? <EmptyState title={t("noExportable")} hint={t("noExportableSub")} /> :
           <ul className="divide-y divide-line">{rows.map((o) => (
             <li key={o.id}><label className="flex min-h-[56px] cursor-pointer items-center gap-3 py-2">
-              <input type="checkbox" className="h-5 w-5" checked={picked.has(o.id)} onChange={(e) => { const n = new Set(picked); e.target.checked ? n.add(o.id) : n.delete(o.id); setPicked(n); }} aria-label={o.order_number} />
+              <input type="checkbox" className="h-5 w-5" checked={effective.some((x) => x.id === o.id)} onChange={(e) => { const n = new Set(effective.map((x) => x.id)); if (e.target.checked) n.add(o.id); else n.delete(o.id); setPicked(n); }} aria-label={o.order_number} />
               <div className="min-w-0 flex-1"><p className="font-semibold">{o.order_number} · {o.retailer.name}</p><p className="text-sm text-muted">{formatDate(o.created_at, lang)} · {o.item_count} {t("items")}</p></div>
               {o.exported_at && <span className="chip bg-paper text-muted">{t("exported")}</span>}
               <span className="font-bold">{formatINR(o.total_paise)}</span></label></li>))}</ul>}

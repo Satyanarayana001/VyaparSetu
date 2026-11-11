@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Info, Sparkles, Trash2 } from "lucide-react";
+import { ChevronDown, Info, Sparkles, Trash2 } from "lucide-react";
 import { useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Banner, LineStatusBadge, Stepper } from "../components/ui";
@@ -30,6 +30,8 @@ function Line({ l, onChange, issues, nameOf }: { l: LineState; onChange: (p: Par
   const p = l.parsed;
   const conf = confidenceLabel(p.confidence);
   const choices = [p.sku, ...p.alternatives.map((a) => a.sku)].filter((s): s is string => !!s);
+  const [open, setOpen] = useState(false);
+  const showChoices = open || !l.productOk;           // a clear match stays compact; an unclear one opens the choices at once
   const needsUnit = p.clarification === "unit" && l.qty === null;
   const unresolved = !l.productOk || !l.qty;
   const code = issues[0]?.code;
@@ -54,14 +56,17 @@ function Line({ l, onChange, issues, nameOf }: { l: LineState; onChange: (p: Par
           {p.match_source === "alias" && <p className="text-xs text-indigo">{t("viaAlias")}</p>}</div>
       </div>
       {messages.map((m, i) => <p key={i} role="alert" className="mt-2 flex gap-2 text-sm font-semibold text-warn"><Info className="mt-0.5 h-4 w-4 shrink-0" aria-hidden />{m}</p>)}
-      <div className="mt-3">
-        <p className="mb-1 text-sm text-muted">{t("notRight")}</p>
-        <div className="flex flex-wrap gap-2" role="group" aria-label={t("chooseProduct")}>
-          {choices.map((sku) => (
-            <button key={sku} type="button" aria-pressed={l.sku === sku && l.productOk} onClick={() => onChange({ sku, productOk: true })}
-              className={`min-h-[44px] rounded-xl border px-3 text-left text-sm font-semibold ${l.sku === sku && l.productOk ? "border-indigo bg-indigo-soft text-indigo-dark" : "border-line bg-white"}`}>{nameOf(sku)}</button>))}
-        </div>
-      </div>
+      {l.productOk && <button type="button" aria-expanded={showChoices} onClick={() => setOpen(!open)} className="mt-2 inline-flex min-h-[44px] items-center gap-1 font-semibold text-indigo">
+        {t("changeProduct")}<ChevronDown className={`h-4 w-4 transition-transform ${showChoices ? "rotate-180" : ""}`} aria-hidden /></button>}
+      {showChoices && (
+        <div className="mt-2">
+          <p className="mb-1 text-sm text-muted">{t("notRight")}</p>
+          <div className="flex flex-wrap gap-2" role="group" aria-label={t("chooseProduct")}>
+            {choices.map((sku) => (
+              <button key={sku} type="button" aria-pressed={l.sku === sku && l.productOk} onClick={() => onChange({ sku, productOk: true })}
+                className={`min-h-[44px] rounded-xl border px-3 text-left text-sm font-semibold ${l.sku === sku && l.productOk ? "border-indigo bg-indigo-soft text-indigo-dark" : "border-line bg-white"}`}>{nameOf(sku)}</button>))}
+          </div>
+        </div>)}
       <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
         <div className="flex flex-wrap items-center gap-2">
           <Stepper value={l.qty} min={0} onChange={(n) => onChange({ qty: n === 0 ? null : n })} label={`${t("casesLabel")} – ${p.original_phrase}`} />
@@ -117,7 +122,7 @@ export default function Message() {
       <div><h1 className="text-2xl font-bold">{t("aiTitle")}</h1><p className="mt-1 text-muted">{t("aiSub")}</p></div>
       {ai.data && (ai.data.mode === "llm"
         ? <Banner tone="info"><Sparkles className="mr-1 inline h-4 w-4" />{t("modeLlm")}: {ai.data.model}</Banner>
-        : <Banner tone="warn"><b>{t("modeFallback")}.</b> {t("modeFallbackHelp")}</Banner>)}
+        : <Banner tone="warn"><b>{t("modeFallback")}.</b>{result ? "" : ` ${t("modeFallbackHelp")}`}</Banner>)}
       {!result && (
         <div className="tile space-y-3 p-4">
           <label htmlFor="msg" className="sr-only">{t("aiTitle")}</label>
@@ -131,16 +136,18 @@ export default function Message() {
         <div className="flex items-center justify-between"><h2 className="text-xl font-bold">{t("reviewLines")}</h2>
           <button className="btn btn-ghost" onClick={() => { setResult(null); setLines([]); }}>{t("readAgain")}</button></div>
         <blockquote className="rounded-xl bg-white p-3 text-sm text-muted border border-line">{result.original_message}</blockquote>
-        {result.mode === "fallback" && <p className="text-sm text-muted">{t("mode_fallback")}{result.fallback_reason ? ` – ${result.fallback_reason}` : ""}</p>}
+        {result.mode === "fallback" && ai.data?.mode === "llm" && <p className="text-sm text-muted">{t("mode_fallback")}{result.fallback_reason ? ` – ${result.fallback_reason}` : ""}</p>}
         {result.lines.length === 0 && <Banner tone="warn">{t("nothingFound")}</Banner>}
         <ul className="space-y-3">{lines.filter((l) => !l.removed).map((l) => (
           <Line key={l.parsed.line_id} l={l} onChange={change(l.parsed.line_id)} nameOf={nameOf} issues={l.sku ? issueText.get(l.sku) ?? [] : []} />))}</ul>
-        <div className="tile sticky bottom-24 space-y-2 p-4 shadow-soft">
-          {quote.data && quoteItems.length > 0 && <div className="flex items-end justify-between"><span className="text-muted">{t("total")}</span><span className="text-2xl font-bold">{formatINR(quote.data.total_paise)}</span></div>}
+        <div className="tile sticky bottom-[calc(68px+env(safe-area-inset-bottom))] space-y-2 border-2 !border-ink p-3 shadow-brut">
           {!quote.data?.credit_ok && quote.data && <Banner tone="bad">{t("overCredit")}</Banner>}
           {confirm.isError && <Banner tone="bad">{errorMessage(confirm.error)}{confirm.error instanceof ApiError && Array.isArray(confirm.error.details) && <ul className="list-disc pl-4">{(confirm.error.details as { message: string }[]).map((d, i) => <li key={i}>{d.message}</li>)}</ul>}</Banner>}
-          <p className={`text-sm font-semibold ${ready ? "text-ok" : "text-warn"}`}>{ready ? t("allChecked") : active.length === 0 ? t("nothingFound") : `${t("needsAttention", { n: attention })}. ${t("clarifyFirst")}`}</p>
-          <button className="btn btn-primary w-full" disabled={!ready || !quote.data?.credit_ok || confirm.isPending} onClick={() => confirm.mutate()}>{confirm.isPending ? t("placing") : t("confirmOrder")}</button>
+          <p className={`text-sm font-semibold ${ready ? "text-ok" : "text-warn"}`} role="status">{ready ? t("allChecked") : active.length === 0 ? t("nothingFound") : t("needsAttention", { n: attention })}</p>
+          <div className="flex items-center gap-3">
+            <div className="min-w-0"><p className="text-sm text-muted">{t("total")}</p><p className="text-xl font-bold leading-tight">{quote.data && quoteItems.length > 0 ? formatINR(quote.data.total_paise) : "—"}</p></div>
+            <button className="btn btn-primary ml-auto flex-1" disabled={!ready || !quote.data?.credit_ok || confirm.isPending} onClick={() => confirm.mutate()}>{confirm.isPending ? t("placing") : t("confirmOrder")}</button>
+          </div>
         </div></>)}
     </div>
   );

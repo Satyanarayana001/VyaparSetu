@@ -45,6 +45,7 @@ const en = {
   loading: "Loading…", retry: "Try again", errorTitle: "Couldn't load this", back: "Back", dismiss: "Dismiss",
   offline: "You're offline. Ordering needs a connection.", notAuthorised: "You don't have access to this page.",
   gstUnspecified: "GST: not specified in the client brief. No GST is added.",
+  add: "Add", update: "Update", viewCart: "View cart", changeProduct: "Change product", correct: "Correct", toReview: "To review", perCase: "/ case", packs: "packs", pricesPerCase: "Prices are per case",
 } as const;
 
 const hi: Record<keyof typeof en, string> = {
@@ -90,6 +91,7 @@ const hi: Record<keyof typeof en, string> = {
   loading: "लोड हो रहा है…", retry: "फिर कोशिश करें", errorTitle: "यह लोड नहीं हो सका", back: "वापस", dismiss: "बंद करें",
   offline: "आप ऑफ़लाइन हैं। ऑर्डर के लिए इंटरनेट चाहिए।", notAuthorised: "आपको इस पेज की अनुमति नहीं है।",
   gstUnspecified: "GST: क्लाइंट ब्रीफ़ में नहीं बताया गया। कोई GST नहीं जोड़ा गया।",
+  add: "जोड़ें", update: "अपडेट", viewCart: "कार्ट देखें", changeProduct: "प्रोडक्ट बदलें", correct: "सुधारें", toReview: "जाँच बाकी", perCase: "/ पेटी", packs: "पैक", pricesPerCase: "भाव प्रति पेटी हैं",
 };
 
 export type TKey = keyof typeof en;

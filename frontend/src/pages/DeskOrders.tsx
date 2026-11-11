@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Search } from "lucide-react";
+import { Pencil, Search } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { Banner, EmptyState, ErrorState, Skeleton, StatusBadge } from "../components/ui";
@@ -17,13 +17,14 @@ function ItemEditor({ order, item, products }: { order: DeskOrder; item: OrderIt
   const [sku, setSku] = useState(item.sku);
   const [qty, setQty] = useState(String(item.quantity_cases));
   const [saveAlias, setSaveAlias] = useState(true);
+  const [open, setOpen] = useState(false);
   useEffect(() => { setSku(item.sku); setQty(String(item.quantity_cases)); }, [item.sku, item.quantity_cases]);
   const editable = order.status === "placed";
   const n = Number(qty);
   const changed = sku !== item.sku || n !== item.quantity_cases;
   const save = useMutation({
     mutationFn: () => patch<DeskOrder>(`/desk/orders/${order.id}/items/${item.id}`, { sku: sku !== item.sku ? sku : undefined, quantity_cases: n !== item.quantity_cases ? n : undefined, save_alias: saveAlias }),
-    onSuccess: (o) => { qc.setQueryData(["desk-order", String(order.id)], o); ["desk-orders", "catalogue"].forEach((k) => qc.invalidateQueries({ queryKey: [k] })); qc.invalidateQueries({ queryKey: ["aliases"] }); },
+    onSuccess: (o) => { setOpen(false); qc.setQueryData(["desk-order", String(order.id)], o); ["desk-orders", "catalogue"].forEach((k) => qc.invalidateQueries({ queryKey: [k] })); qc.invalidateQueries({ queryKey: ["aliases"] }); },
   });
   const conf = item.ai_confidence != null ? confidenceLabel(item.ai_confidence) : null;
   return (
@@ -39,8 +40,9 @@ function ItemEditor({ order, item, products }: { order: DeskOrder; item: OrderIt
         </div>
         <p className="text-lg font-bold">{formatINR(item.line_total_paise)}</p>
       </div>
-      {editable && (
-        <div className="mt-3 grid gap-2 sm:grid-cols-[1fr_110px_auto] sm:items-end">
+      {editable && !open && <button className="btn btn-ghost mt-1 -ml-3" onClick={() => setOpen(true)}><Pencil className="h-4 w-4" aria-hidden />{t("correct")}</button>}
+      {editable && open && (
+        <div className="mt-3 grid gap-2 rounded-xl bg-paper p-3 sm:grid-cols-[1fr_110px_auto] sm:items-end">
           <label className="block text-sm font-medium">{t("product")}
             <select className="input mt-1" value={sku} onChange={(e) => setSku(e.target.value)}>{products.map((p) => <option key={p.sku} value={p.sku}>{p.name} ({p.sku})</option>)}</select></label>
           <label className="block text-sm font-medium">{t("casesLabel")}
@@ -137,7 +139,7 @@ export default function DeskOrders() {
         <div className="flex flex-wrap gap-2" role="tablist" aria-label="Status">
           {FILTERS.map((f) => (
             <button key={f} role="tab" aria-selected={filter === f} onClick={() => setFilter(f)} className={`chip min-h-[40px] border ${filter === f ? "border-ink bg-ink text-white" : "border-line bg-white"}`}>
-              {f === "all" ? t("all") : t(`status_${f}` as TKey)} <b>{f === "all" ? total : list.data?.counts[f] ?? 0}</b></button>))}
+              {f === "all" ? t("all") : f === "placed" ? t("toReview") : t(`status_${f}` as TKey)} <b>{f === "all" ? total : list.data?.counts[f] ?? 0}</b></button>))}
         </div>
         {list.isPending ? <><Skeleton className="h-20" /><Skeleton className="h-20" /></> : list.isError ? <ErrorState message={errorMessage(list.error)} onRetry={() => list.refetch()} /> :
           list.data.orders.length === 0 ? <div className="tile"><EmptyState title={t("noDeskOrders")} hint={t("noDeskOrdersSub")} /></div> :

@@ -1,4 +1,4 @@
-import { FileDown, Home, Languages, LogOut, MessageSquareText, ReceiptText, ShoppingBag, ShoppingCart, Tags, ClipboardList, WifiOff } from "lucide-react";
+import { Boxes, FileDown, Home, Languages, LogOut, MessageSquareText, ReceiptText, ShoppingBag, ShoppingCart, Tags, ClipboardList, WifiOff } from "lucide-react";
 import { useEffect, useState } from "react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { useAuth } from "../lib/auth";
@@ -22,6 +22,7 @@ function TopBar({ subtitle, children }: { subtitle?: string; children?: React.Re
   return (
     <header className="glass sticky top-0 z-30 border-b border-line pt-[env(safe-area-inset-top)]">
       <div className="mx-auto flex max-w-6xl items-center gap-2 px-4 h-14">
+        <span aria-hidden className="grid h-9 w-9 shrink-0 place-items-center rounded-xl border-2 border-ink bg-indigo text-white shadow-brut-sm"><Boxes className="h-5 w-5" /></span>
         <div className="mr-auto min-w-0">
           <p className="font-bold leading-tight truncate">{t("appName")}</p>
           {subtitle && <p className="text-sm text-muted leading-tight truncate">{subtitle}</p>}

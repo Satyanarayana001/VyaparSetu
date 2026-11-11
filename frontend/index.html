@@ -11,7 +11,14 @@
     <title>Company A Orders</title>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <!-- Static shell: paints as soon as the HTML arrives, before any JavaScript downloads (slow 3G). React replaces it. -->
+      <div style="font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh;background:#F5F6F8;color:#12162B;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px">
+        <div style="width:52px;height:52px;border-radius:14px;background:#3640D6;border:2px solid #12162B;box-shadow:3px 3px 0 #12162B"></div>
+        <div style="font-weight:700;font-size:18px">Company A Orders</div>
+        <noscript>This app needs JavaScript.</noscript>
+      </div>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

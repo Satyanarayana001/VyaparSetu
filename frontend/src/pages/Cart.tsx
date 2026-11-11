@@ -54,7 +54,7 @@ export default function Cart() {
               <li key={l.sku} className={`tile p-4 ${bad ? "!border-bad" : ""}`}>
                 <div className="flex items-start gap-3">
                   <div className="min-w-0 flex-1">
-                    <p className="font-bold">{ql?.product_name ?? l.sku}</p><p className="text-sm text-muted">{l.sku}</p>
+                    <p className="font-bold">{ql?.product_name ?? l.sku}</p><p className="text-sm text-muted">{l.sku}{ql?.case_price_paise != null ? ` · ${l.qty} × ${formatINR(ql.case_price_paise)}` : ""}</p>
                     {ql?.scheme_applied && <div className="mt-2"><SchemeTag>{ql.scheme_applied}</SchemeTag></div>}
                     {ql?.issues.map((i) => <p key={i.code} role="alert" className="mt-2 text-sm font-semibold text-bad">{i.message}</p>)}
                   </div>
