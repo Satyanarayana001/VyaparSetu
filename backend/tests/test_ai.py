@@ -234,3 +234,17 @@ def test_no_provider_without_key():
     assert llm.build_provider(Settings(llm_provider="openai", llm_api_key=None, llm_model="m")) is None
     assert llm.build_provider(Settings(llm_provider="none", llm_api_key="k", llm_model="m")) is None
     assert llm.build_provider(Settings(llm_provider="openai", llm_api_key="k", llm_model="m")).name == "openai"
+
+
+def test_model_cannot_assume_a_unit_or_invent_a_quantity(client, r1):
+    """'Do not guess unclear units' must hold even if the model does: the backend checks the customer's own words."""
+    use(FakeProvider({"lines": [
+        {"original_phrase": "biscuit 5", "quantity": 5, "unit": "case", "sku": BS, "confidence": 0.95, "alternative_skus": []},
+        {"original_phrase": "detergent", "quantity": 50, "unit": "case", "sku": DT, "confidence": 0.95, "alternative_skus": []},
+        {"original_phrase": "5 packet chai", "quantity": 5, "unit": "case", "sku": TE, "confidence": 0.95, "alternative_skus": []},
+        {"original_phrase": "2 peti biscuit", "quantity": 2, "unit": "case", "sku": BS, "confidence": 0.95, "alternative_skus": []}]}))
+    a, b, c, d = parse(client, r1, "x")["lines"]
+    assert a["unit"] == "unknown" and a["quantity"] is None and a["clarification"] == "unit" and a["raw_quantity"] == 5
+    assert b["raw_quantity"] is None and b["quantity"] is None and b["validation_status"] == "needs_clarification"
+    assert c["quantity"] is None and c["validation_status"] == "needs_clarification"          # 'packet' is not 'case'
+    assert (d["quantity"], d["unit"], d["validation_status"]) == (2, "case", "ok")           # a genuine case line still passes

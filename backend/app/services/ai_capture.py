@@ -8,7 +8,8 @@ from .. import models
 from ..config import settings
 from . import llm, pricing
 from .ai_types import RawLine
-from .nlp_fallback import extract_product_phrase, normalize_alias, parse_with_rules
+from .nlp_fallback import (CASE_WORDS, PIECE_WORDS, extract_product_phrase, normalize_alias, parse_number, parse_with_rules,
+                           tokenize)
 
 log = logging.getLogger("app.ai")
 MIN_CONFIDENCE = 0.7      # below this a line must be confirmed/corrected by a human
@@ -45,12 +46,20 @@ def _apply_aliases(raw: list[RawLine], aliases: list[tuple[str, str]], products)
 
 
 def _from_llm(llm_lines: list[llm.LLMLine], products) -> list[RawLine]:
+    """Model output is untrusted. Besides catalogue validation, two guards enforce 'never guess units or quantities':
+    a unit or quantity the model reports must actually be present in the customer's own words for that line."""
     valid = {p.sku for p in products}
     out = []
     for l in llm_lines:
         sku = l.sku if l.sku in valid else None          # never trust an SKU that isn't in the catalogue
         alts = [s for s in l.alternative_skus if s in valid and s != sku]
-        out.append(RawLine(original_phrase=l.original_phrase.strip(), raw_quantity=l.quantity, unit=l.unit, sku=sku,
+        toks = tokenize(l.original_phrase)
+        unit = l.unit
+        if (unit == "case" and not any(t in CASE_WORDS for t in toks)) or (unit == "piece" and not any(t in PIECE_WORDS for t in toks)):
+            unit = "unknown"                              # model assumed a unit the customer never wrote
+        numbers = {parse_number(t) for t in toks} - {None}
+        qty = l.quantity if l.quantity is not None and l.quantity in numbers else None   # model invented a quantity
+        out.append(RawLine(original_phrase=l.original_phrase.strip(), raw_quantity=qty, unit=unit, sku=sku,
                            confidence=l.confidence if sku else 0.0, alternative_skus=alts, source="llm"))
     return out
 

@@ -117,3 +117,12 @@ def test_repeat_without_history_is_a_clear_404(client, db, r2):
 def test_errors_never_leak_internals(client, r1):
     r = client.post("/api/orders", json={"items": "oops"}, headers=r1)
     assert r.status_code == 422 and "Traceback" not in r.text and r.json()["error"]["code"] == "VALIDATION_ERROR"
+
+
+def test_quote_totals_exclude_lines_that_cannot_be_ordered(client, r1):
+    """Regression: an out-of-stock line used to be added into the total shown to the retailer."""
+    q = client.post("/api/orders/quote", headers=r1, json={"items": [
+        {"sku": BS, "quantity_cases": 5}, {"sku": DT, "quantity_cases": 2}, {"sku": TE, "quantity_cases": 1}]}).json()
+    assert q["total_paise"] == 388_800 + 406_000 and q["subtotal_paise"] == q["total_paise"] and q["can_order"] is False
+    tea = next(l for l in q["lines"] if l["sku"] == TE)
+    assert tea["issues"][0]["code"] == "OUT_OF_STOCK"

@@ -7,7 +7,6 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.responses import FileResponse
-from fastapi.staticfiles import StaticFiles
 
 from .config import settings
 from .database import Base, SessionLocal, engine
@@ -59,17 +58,29 @@ def health():
 
 
 # Optionally serve the built frontend from the same origin (single-service deployment).
-_dist = Path(os.getenv("FRONTEND_DIST", Path(__file__).resolve().parents[2] / "frontend" / "dist"))
-if _dist.is_dir():
-    app.mount("/assets", StaticFiles(directory=_dist / "assets"), name="assets")
+# Pre-compressed Brotli files (written by `npm run build`) are served when the browser accepts them: smaller on slow networks.
+import mimetypes  # noqa: E402
 
+_dist = Path(os.getenv("FRONTEND_DIST", Path(__file__).resolve().parents[2] / "frontend" / "dist"))
+
+
+def _file(request: Request, target: Path, headers: dict | None = None) -> FileResponse:
+    headers = dict(headers or {})
+    media = mimetypes.guess_type(target.name)[0] or "application/octet-stream"
+    br = target.with_name(target.name + ".br")
+    if "br" in request.headers.get("accept-encoding", "") and br.is_file():
+        headers.update({"Content-Encoding": "br", "Vary": "Accept-Encoding"})
+        return FileResponse(br, media_type=media, headers=headers)
+    return FileResponse(target, media_type=media, headers=headers)
+
+
+if _dist.is_dir():
     @app.get("/{path:path}", include_in_schema=False)
-    def spa(path: str):
+    def spa(path: str, request: Request):
         if path.startswith("api/"):
             from .errors import ApiError
             raise ApiError(404, "NOT_FOUND", "Not found.")
         target = (_dist / path).resolve()
         if path and target.is_file() and _dist.resolve() in target.parents:
-            headers = {"Cache-Control": "no-cache"} if path in {"sw.js", "index.html"} else {}
-            return FileResponse(target, headers=headers)
-        return FileResponse(_dist / "index.html", headers={"Cache-Control": "no-cache"})
+            return _file(request, target, {"Cache-Control": "no-cache"} if path in {"sw.js", "index.html", "manifest.webmanifest"} else None)
+        return _file(request, _dist / "index.html", {"Cache-Control": "no-cache"})

@@ -83,7 +83,8 @@ def price_items(db: Session, retailer: models.Retailer, items: list[ItemInput]) 
 
 
 def totals(lines: list[PricedLine]) -> dict:
-    ok = [l for l in lines if l.calc]
+    """Totals cover only lines that can actually be ordered; a line with an issue (e.g. out of stock) is never counted."""
+    ok = [l for l in lines if l.calc and not l.issues]
     return {"subtotal_paise": sum(l.calc.gross_paise for l in ok), "discount_paise": sum(l.calc.discount_paise for l in ok),
             "total_paise": sum(l.calc.line_total_paise for l in ok), "free_cases": sum(l.calc.free_cases for l in ok)}
 
