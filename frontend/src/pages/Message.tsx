@@ -140,7 +140,7 @@ export default function Message() {
         {result.lines.length === 0 && <Banner tone="warn">{t("nothingFound")}</Banner>}
         <ul className="space-y-3">{lines.filter((l) => !l.removed).map((l) => (
           <Line key={l.parsed.line_id} l={l} onChange={change(l.parsed.line_id)} nameOf={nameOf} issues={l.sku ? issueText.get(l.sku) ?? [] : []} />))}</ul>
-        <div className="tile sticky bottom-[calc(68px+env(safe-area-inset-bottom))] space-y-2 border-2 !border-ink p-3 shadow-brut">
+        <div className="tile sticky bottom-[calc(68px+env(safe-area-inset-bottom))] space-y-2 border border-line p-3 shadow-card">
           {!quote.data?.credit_ok && quote.data && <Banner tone="bad">{t("overCredit")}</Banner>}
           {confirm.isError && <Banner tone="bad">{errorMessage(confirm.error)}{confirm.error instanceof ApiError && Array.isArray(confirm.error.details) && <ul className="list-disc pl-4">{(confirm.error.details as { message: string }[]).map((d, i) => <li key={i}>{d.message}</li>)}</ul>}</Banner>}
           <p className={`text-sm font-semibold ${ready ? "text-ok" : "text-warn"}`} role="status">{ready ? t("allChecked") : active.length === 0 ? t("nothingFound") : t("needsAttention", { n: attention })}</p>

@@ -3,7 +3,13 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState, t
 import type { User } from "../types";
 import { get, post, setUnauthorizedHandler, tokenStore } from "./api";
 
-interface Auth { user: User | null; loading: boolean; login: (email: string, password: string) => Promise<User>; logout: () => void }
+interface Auth {
+  user: User | null;
+  loading: boolean;
+  login: (email: string, password: string) => Promise<User>;
+  register: (details: { shop_name: string; owner_name: string; email: string; password: string }) => Promise<User>;
+  logout: () => void;
+}
 const Ctx = createContext<Auth | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -33,7 +39,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return res.user;
   }, [qc]);
 
-  const value = useMemo(() => ({ user, loading, login, logout }), [user, loading, login, logout]);
+  const register = useCallback(async (details: { shop_name: string; owner_name: string; email: string; password: string }) => {
+    const res = await post<{ access_token: string; user: User }>("/auth/register", details);
+    qc.clear();
+    tokenStore.set(res.access_token);
+    setUser(res.user);
+    return res.user;
+  }, [qc]);
+
+  const value = useMemo(() => ({ user, loading, login, register, logout }), [user, loading, login, register, logout]);
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }
 

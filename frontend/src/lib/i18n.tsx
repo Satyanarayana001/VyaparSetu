@@ -3,7 +3,7 @@ import { createContext, useCallback, useContext, useMemo, useState, type ReactNo
 export type Lang = "en" | "hi";
 
 const en = {
-  appName: "Company A Orders", signIn: "Sign in", signOut: "Sign out", email: "Email", password: "Password",
+  appName: "VyaparSetu", signIn: "Sign in", signOut: "Sign out", email: "Email", password: "Password",
   signingIn: "Signing in…", demoLogins: "Demo accounts (local only)", language: "हिंदी",
   navHome: "Home", navShop: "Shop", navMessage: "Message", navCart: "Cart", navOrders: "Orders",
   hello: "Hello", availableCredit: "Available credit", creditLimit: "Credit limit", outstanding: "Outstanding", openOrders: "Open orders",
@@ -49,7 +49,7 @@ const en = {
 } as const;
 
 const hi: Record<keyof typeof en, string> = {
-  appName: "कंपनी A ऑर्डर", signIn: "साइन इन", signOut: "साइन आउट", email: "ईमेल", password: "पासवर्ड",
+  appName: "व्यापारसेतु", signIn: "साइन इन", signOut: "साइन आउट", email: "ईमेल", password: "पासवर्ड",
   signingIn: "साइन इन हो रहा है…", demoLogins: "डेमो खाते (सिर्फ़ लोकल)", language: "English",
   navHome: "होम", navShop: "दुकान", navMessage: "मैसेज", navCart: "कार्ट", navOrders: "ऑर्डर",
   hello: "नमस्ते", availableCredit: "उपलब्ध क्रेडिट", creditLimit: "क्रेडिट सीमा", outstanding: "बकाया", openOrders: "खुले ऑर्डर",

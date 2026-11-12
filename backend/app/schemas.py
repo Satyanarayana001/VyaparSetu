@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Literal
 
-from pydantic import BaseModel, ConfigDict, Field, StrictInt
+from pydantic import BaseModel, ConfigDict, Field, StrictInt, field_validator
 
 from .models import OrderSource, OrderStatus, Role
 
@@ -9,6 +9,23 @@ from .models import OrderSource, OrderStatus, Role
 class LoginIn(BaseModel):
     email: str = Field(min_length=3, max_length=254)
     password: str = Field(min_length=1, max_length=72)
+
+
+class RetailerRegisterIn(BaseModel):
+    shop_name: str = Field(min_length=2, max_length=150)
+    owner_name: str = Field(min_length=2, max_length=100)
+    email: str = Field(min_length=5, max_length=254)
+    password: str = Field(min_length=10, max_length=72)
+
+    @field_validator("email")
+    @classmethod
+    def valid_email(cls, value: str) -> str:
+        import re
+        value = value.strip().lower()
+        if not re.fullmatch(r"[^@\s]+@[^@\s]+\.[^@\s]+", value):
+            raise ValueError("Enter a valid email address.")
+        return value
+
 
 
 class RetailerBrief(BaseModel):

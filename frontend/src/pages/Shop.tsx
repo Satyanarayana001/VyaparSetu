@@ -30,18 +30,18 @@ function ProductCard({ p }: { p: Product }) {
   return (
     <article className="tile overflow-hidden" aria-label={p.name}>
       <div className="relative">
-        <div className={`bg-[#EEF0FF] ${out ? "grayscale" : ""}`}><ProductArt sku={p.sku} className="mx-auto aspect-[16/10] w-full max-w-md sm:aspect-[4/3]" /></div>
-        {out && <span className="absolute left-3 top-3 chip border-2 border-ink bg-bad text-white shadow-brut-sm">{t("outOfStock")}</span>}
+        <div className={`bg-[#F1F4EF] ${out ? "grayscale" : ""}`}><ProductArt sku={p.sku} className="mx-auto aspect-[16/10] w-full max-w-md sm:aspect-[4/3]" /></div>
+        {out && <span className="absolute left-3 top-3 chip border border-bad/20 bg-bad text-white shadow-sm">{t("outOfStock")}</span>}
         {sch && !out && <span className="absolute left-3 top-3"><SchemeTag>{sch}</SchemeTag></span>}
       </div>
-      <div className="space-y-2.5 p-4">
+      <div className="space-y-3 p-4 sm:p-5">
         <div>
-          <h2 className="text-lg font-bold leading-snug">{name}</h2>
+          <h2 className="text-base font-bold leading-snug text-ink sm:text-lg">{name}</h2>
           <p className="text-sm text-muted">{sub ? `${sub} · ` : ""}{p.sku} · {p.packaging_label}</p>
         </div>
         <div className="flex items-end justify-between gap-3">
           <div>
-            <p className="text-3xl font-bold leading-none tracking-tight">{formatINR(p.case_price_paise)}<span className="ml-1.5 text-base font-medium text-muted">{t("perCase")}</span></p>
+            <p className="text-2xl font-bold leading-none tracking-tight text-ink sm:text-3xl">{formatINR(p.case_price_paise)}<span className="ml-1.5 text-base font-medium text-muted">{t("perCase")}</span></p>
             <p className="mt-1 text-sm text-muted">{formatINR(p.unit_price_paise)} × {p.case_size} {t("packs")}</p>
           </div>
           <p className={`chip shrink-0 ${out ? "bg-bad-soft text-bad" : "bg-ok-soft text-ok"}`}>{out ? t("outOfStock") : `${p.stock_cases} ${t("cases")}`}</p>
@@ -67,7 +67,7 @@ function CartBar() {
   const quote = useQuote(cart.state.lines.map((l) => ({ sku: l.sku, quantity_cases: l.qty })));
   if (cart.count === 0) return null;
   return (
-    <Link to="/cart" aria-label={t("viewCart")} className="fixed inset-x-3 bottom-[calc(68px+env(safe-area-inset-bottom))] z-20 mx-auto flex max-w-xl items-center gap-3 rounded-2xl border-2 border-ink bg-indigo px-4 py-3 text-white shadow-brut">
+    <Link to="/cart" aria-label={t("viewCart")} className="fixed inset-x-3 bottom-[calc(68px+env(safe-area-inset-bottom))] z-20 mx-auto flex max-w-xl items-center gap-3 rounded-2xl border border-forest bg-forest px-4 py-3 text-white shadow-float">
       <ShoppingCart className="h-6 w-6 shrink-0" aria-hidden />
       <span className="font-semibold">{cart.count} {cart.count === 1 ? t("item1") : t("items")}</span>
       <span className="ml-auto text-lg font-bold">{quote.data ? formatINR(quote.data.total_paise) : "…"}</span>

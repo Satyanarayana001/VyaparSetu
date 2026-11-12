@@ -22,7 +22,7 @@ function TopBar({ subtitle, children }: { subtitle?: string; children?: React.Re
   return (
     <header className="glass sticky top-0 z-30 border-b border-line pt-[env(safe-area-inset-top)]">
       <div className="mx-auto flex max-w-6xl items-center gap-2 px-4 h-14">
-        <span aria-hidden className="grid h-9 w-9 shrink-0 place-items-center rounded-xl border-2 border-ink bg-indigo text-white shadow-brut-sm"><Boxes className="h-5 w-5" /></span>
+        <span aria-hidden className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-forest text-white shadow-sm"><Boxes className="h-5 w-5" /></span>
         <div className="mr-auto min-w-0">
           <p className="font-bold leading-tight truncate">{t("appName")}</p>
           {subtitle && <p className="text-sm text-muted leading-tight truncate">{subtitle}</p>}
@@ -64,9 +64,9 @@ export function RetailerLayout() {
         <ul className="mx-auto grid max-w-xl grid-cols-5">
           {items.map(({ to, icon: Icon, label, end, badge }) => (
             <li key={to}>
-              <NavLink to={to} end={end} className={({ isActive }) => `relative flex min-h-[60px] flex-col items-center justify-center gap-0.5 text-xs font-semibold ${isActive ? "text-indigo" : "text-muted"}`}>
+              <NavLink to={to} end={end} className={({ isActive }) => `relative flex min-h-[60px] flex-col items-center justify-center gap-0.5 text-xs font-semibold ${isActive ? "text-forest" : "text-muted"}`}>
                 {({ isActive }) => (<>
-                  <span className={`grid h-8 w-12 place-items-center rounded-full ${isActive ? "bg-indigo-soft" : ""}`}><Icon className="h-5 w-5" /></span>
+                  <span className={`grid h-8 w-12 place-items-center rounded-full ${isActive ? "bg-forest-soft" : ""}`}><Icon className="h-5 w-5" /></span>
                   {label}
                   {!!badge && <span className="absolute top-1.5 left-1/2 ml-2 grid h-5 min-w-5 place-items-center rounded-full bg-ink px-1 text-[11px] text-white">{badge}</span>}
                 </>)}
@@ -90,7 +90,7 @@ export function DeskLayout() {
       <div className="border-b border-line bg-white">
         <nav aria-label="Order desk" className="mx-auto flex max-w-6xl gap-1 overflow-x-auto px-3">
           {tabs.map(({ to, icon: Icon, label, end }) => (
-            <NavLink key={to} to={to} end={end} className={({ isActive }) => `flex min-h-[48px] items-center gap-2 border-b-[3px] px-3 font-semibold whitespace-nowrap ${isActive ? "border-indigo text-indigo" : "border-transparent text-muted"}`}>
+            <NavLink key={to} to={to} end={end} className={({ isActive }) => `flex min-h-[48px] items-center gap-2 border-b-[3px] px-3 font-semibold whitespace-nowrap ${isActive ? "border-forest text-forest" : "border-transparent text-muted"}`}>
               <Icon className="h-5 w-5" />{label}
             </NavLink>
           ))}

@@ -30,30 +30,33 @@ export default function Home() {
   const usedPct = credit && credit.credit_limit_paise ? Math.min(100, Math.round(((credit.credit_limit_paise - credit.available_paise) / credit.credit_limit_paise) * 100)) : 0;
 
   return (
-    <div className="space-y-4">
-      <h1 className="text-2xl font-bold">{t("hello")}, {user?.name.replace(" (demo)", "")}</h1>
+    <div className="space-y-6">
+      <div className="flex flex-wrap items-end justify-between gap-3">
+        <div><p className="section-kicker">Company A · Jabalpur</p><h1 className="page-title mt-1">{t("hello")}, {user?.name.replace(" (demo)", "")}</h1><p className="mt-1 text-sm text-muted">Your wholesale account at a glance.</p></div>
+        <span className="chip bg-forest-soft text-forest">Retailer account</span>
+      </div>
       <div className="grid grid-cols-2 gap-3 md:grid-cols-6 md:gap-4">
         <section className="tile col-span-2 p-5 md:col-span-3" aria-label={t("availableCredit")}>
           <div className="flex items-center justify-between"><h2 className="font-semibold text-muted">{t("availableCredit")}</h2><span className="chip bg-paper text-muted">{t("demoData")}</span></div>
           {profile.isPending ? <Skeleton className="mt-3 h-12" /> : profile.isError ? <ErrorState message={errorMessage(profile.error)} onRetry={() => profile.refetch()} /> : credit && (<>
             <p className="mt-2 text-4xl font-bold tracking-tight">{formatINR(credit.available_paise)}</p>
-            <div className="mt-4 h-2.5 overflow-hidden rounded-full bg-line" role="progressbar" aria-valuenow={usedPct} aria-valuemin={0} aria-valuemax={100} aria-label={t("creditLimit")}><div className="h-full rounded-full bg-indigo" style={{ width: `${usedPct}%` }} /></div>
+            <div className="mt-4 h-2.5 overflow-hidden rounded-full bg-line" role="progressbar" aria-valuenow={usedPct} aria-valuemin={0} aria-valuemax={100} aria-label={t("creditLimit")}><div className="h-full rounded-full bg-forest" style={{ width: `${usedPct}%` }} /></div>
             <dl className="mt-3 grid grid-cols-3 gap-2 text-sm">
               <div><dt className="text-muted">{t("creditLimit")}</dt><dd className="font-semibold">{formatINR(credit.credit_limit_paise)}</dd></div>
               <div><dt className="text-muted">{t("outstanding")}</dt><dd className="font-semibold">{formatINR(credit.outstanding_paise)}</dd></div>
               <div><dt className="text-muted">{t("openOrders")}</dt><dd className="font-semibold">{formatINR(credit.open_orders_paise)}</dd></div>
             </dl></>)}
         </section>
-        <Link to="/message" className="tile flex min-h-[150px] flex-col justify-between border-2 border-ink !bg-indigo p-4 text-white shadow-brut md:col-span-3 md:p-5">
+        <Link to="/message" className="tile flex min-h-[150px] flex-col justify-between !border-0 !bg-forest p-5 text-white shadow-card md:col-span-3 md:p-6 hover:!bg-forest-dark transition-colors">
           <MessageSquareText className="h-7 w-7" aria-hidden />
           <div><h2 className="text-lg font-bold leading-tight">{t("orderByMessage")}</h2><p className="mt-1 hidden text-white/85 md:block">{t("orderByMessageSub")}</p></div>
         </Link>
-        <Link to="/shop" className="tile flex min-h-[150px] flex-col justify-between p-4 md:col-span-3 md:p-5">
-          <Store className="h-7 w-7 text-indigo" aria-hidden />
+        <Link to="/shop" className="tile flex min-h-[150px] flex-col justify-between p-5 md:col-span-3 md:p-6 hover:border-forest/30 transition-colors">
+          <Store className="h-7 w-7 text-forest" aria-hidden />
           <div><h2 className="text-lg font-bold leading-tight">{t("browse")}</h2><p className="mt-1 hidden text-muted md:block">{t("browseSub")}</p></div>
         </Link>
         <button className="tile col-span-2 flex items-center gap-4 p-4 text-left md:col-span-6 md:p-5 disabled:opacity-60" disabled={!last.data || repeat.isPending} onClick={() => repeat.mutate()}>
-          <Repeat2 className="h-7 w-7 shrink-0 text-indigo" aria-hidden />
+          <Repeat2 className="h-7 w-7 shrink-0 text-forest" aria-hidden />
           <div className="min-w-0"><h2 className="text-lg font-bold leading-tight">{t("repeatLast")}</h2>
             <p className="mt-0.5 text-muted">{last.isPending ? "…" : last.data ? `${last.data.order_number} · ${formatDate(last.data.created_at, lang)}` : t("noPrevious")}</p></div>
           {last.data && <ArrowRight className="ml-auto h-5 w-5 shrink-0 text-muted" aria-hidden />}

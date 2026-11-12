@@ -42,7 +42,7 @@ export default function Cart() {
   const blocked = !q || !q.can_order || !q.credit_ok || quote.isFetching;
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between"><h1 className="text-2xl font-bold">{t("cartTitle")}</h1><button className="btn btn-ghost" onClick={cart.clear}>{t("clearCart")}</button></div>
+      <div className="flex items-center justify-between"><div><p className="section-kicker">Your order</p><h1 className="page-title mt-1">{t("cartTitle")}</h1></div><button className="btn btn-ghost" onClick={cart.clear}>{t("clearCart")}</button></div>
       {cart.state.repeatOf && <Banner tone="info">{t("loadedFrom")} {cart.state.repeatOf.number}. {t("reviewQty")}</Banner>}
       {quote.isError && <ErrorState message={errorMessage(quote.error)} onRetry={() => quote.refetch()} />}
       <div className="grid gap-4 lg:grid-cols-[1fr_360px]">
