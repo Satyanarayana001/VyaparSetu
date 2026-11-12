@@ -24,8 +24,8 @@ export default function DeskExport() {
   });
   const sum = effective.reduce((a, o) => a + o.total_paise, 0);
   return (
-    <div className="mx-auto max-w-4xl space-y-4">
-      <div><h1 className="text-2xl font-bold">{t("exportTitle")}</h1><p className="mt-1 text-muted">{t("exportSub")}</p></div>
+    <div className="mx-auto max-w-5xl space-y-5">
+      <div><p className="section-kicker">Tally integration</p><h1 className="page-title mt-1">{t("exportTitle")}</h1><p className="mt-1 text-sm text-muted">{t("exportSub")}</p></div>
       {exp.isSuccess && <Banner tone="ok">{t("downloaded", { n: exp.data })}</Banner>}
       {exp.isError && <Banner tone="bad">{errorMessage(exp.error)}</Banner>}
       <div className="tile p-4">

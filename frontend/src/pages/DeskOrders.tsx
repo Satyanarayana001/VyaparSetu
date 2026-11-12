@@ -73,7 +73,7 @@ function Detail({ id }: { id: string }) {
   if (q.isError) return <ErrorState message={errorMessage(q.error)} onRetry={() => q.refetch()} />;
   const o = q.data, c = o.retailer_detail.credit;
   return (
-    <div className="tile space-y-4 p-5">
+    <div className="tile space-y-5 p-4 sm:p-6">
       <button className="btn btn-ghost -ml-3 lg:hidden" onClick={() => nav("/desk")}>← {t("back")}</button>
       <div className="flex flex-wrap items-start justify-between gap-2">
         <div><h2 className="text-2xl font-bold">{o.order_number}</h2><p className="text-sm text-muted">{t("created")} {formatDate(o.created_at, lang)} · {t(`placedVia_${o.source}` as TKey)}</p></div>

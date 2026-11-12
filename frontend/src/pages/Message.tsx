@@ -53,10 +53,10 @@ function Line({ l, onChange, issues, nameOf }: { l: LineState; onChange: (p: Par
         </div>
         <div className="text-right text-sm"><p className="text-muted">{t("confidence")}</p>
           <p className={`font-bold ${conf === "low" ? "text-bad" : conf === "medium" ? "text-warn" : "text-ok"}`}>{Math.round(p.confidence * 100)}% · {t(conf)}</p>
-          {p.match_source === "alias" && <p className="text-xs text-indigo">{t("viaAlias")}</p>}</div>
+          {p.match_source === "alias" && <p className="text-xs text-forest">{t("viaAlias")}</p>}</div>
       </div>
       {messages.map((m, i) => <p key={i} role="alert" className="mt-2 flex gap-2 text-sm font-semibold text-warn"><Info className="mt-0.5 h-4 w-4 shrink-0" aria-hidden />{m}</p>)}
-      {l.productOk && <button type="button" aria-expanded={showChoices} onClick={() => setOpen(!open)} className="mt-2 inline-flex min-h-[44px] items-center gap-1 font-semibold text-indigo">
+      {l.productOk && <button type="button" aria-expanded={showChoices} onClick={() => setOpen(!open)} className="mt-2 inline-flex min-h-[44px] items-center gap-1 font-semibold text-forest">
         {t("changeProduct")}<ChevronDown className={`h-4 w-4 transition-transform ${showChoices ? "rotate-180" : ""}`} aria-hidden /></button>}
       {showChoices && (
         <div className="mt-2">
@@ -64,7 +64,7 @@ function Line({ l, onChange, issues, nameOf }: { l: LineState; onChange: (p: Par
           <div className="flex flex-wrap gap-2" role="group" aria-label={t("chooseProduct")}>
             {choices.map((sku) => (
               <button key={sku} type="button" aria-pressed={l.sku === sku && l.productOk} onClick={() => onChange({ sku, productOk: true })}
-                className={`min-h-[44px] rounded-xl border px-3 text-left text-sm font-semibold ${l.sku === sku && l.productOk ? "border-indigo bg-indigo-soft text-indigo-dark" : "border-line bg-white"}`}>{nameOf(sku)}</button>))}
+                className={`min-h-[44px] rounded-xl border px-3 text-left text-sm font-semibold ${l.sku === sku && l.productOk ? "border-indigo bg-indigo-soft text-forest-dark" : "border-line bg-white"}`}>{nameOf(sku)}</button>))}
           </div>
         </div>)}
       <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
@@ -124,7 +124,7 @@ export default function Message() {
         ? <Banner tone="info"><Sparkles className="mr-1 inline h-4 w-4" />{t("modeLlm")}: {ai.data.model}</Banner>
         : <Banner tone="warn"><b>{t("modeFallback")}.</b>{result ? "" : ` ${t("modeFallbackHelp")}`}</Banner>)}
       {!result && (
-        <div className="tile space-y-3 p-4">
+        <div className="tile space-y-4 p-4 sm:p-5">
           <label htmlFor="msg" className="sr-only">{t("aiTitle")}</label>
           <textarea id="msg" className="input min-h-[140px] py-3" maxLength={1000} lang="hi" placeholder={t("aiPlaceholder")} value={text} onChange={(e) => setText(e.target.value)} />
           <div><p className="mb-1 text-sm text-muted">{t("examples")}</p>
@@ -133,7 +133,7 @@ export default function Message() {
           <button className="btn btn-primary w-full" disabled={!text.trim() || parse.isPending} onClick={() => parse.mutate()}>{parse.isPending ? t("reading") : t("readOrder")}</button>
         </div>)}
       {result && (<>
-        <div className="flex items-center justify-between"><h2 className="text-xl font-bold">{t("reviewLines")}</h2>
+        <div className="flex flex-wrap items-center justify-between gap-2"><div><p className="section-kicker">Review before placing</p><h2 className="text-xl font-bold text-ink">{t("reviewLines")}</h2></div>
           <button className="btn btn-ghost" onClick={() => { setResult(null); setLines([]); }}>{t("readAgain")}</button></div>
         <blockquote className="rounded-xl bg-white p-3 text-sm text-muted border border-line">{result.original_message}</blockquote>
         {result.mode === "fallback" && ai.data?.mode === "llm" && <p className="text-sm text-muted">{t("mode_fallback")}{result.fallback_reason ? ` – ${result.fallback_reason}` : ""}</p>}

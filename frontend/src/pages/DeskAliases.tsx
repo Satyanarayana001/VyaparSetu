@@ -22,8 +22,8 @@ export default function DeskAliases() {
   });
   const remove = useMutation({ mutationFn: (id: number) => del(`/desk/retailers/${current}/aliases/${id}`), onSuccess: () => qc.invalidateQueries({ queryKey: ["aliases", current] }) });
   return (
-    <div className="mx-auto max-w-3xl space-y-4">
-      <div><h1 className="text-2xl font-bold">{t("aliasesTitle")}</h1><p className="mt-1 text-muted">{t("aliasesSub")}</p></div>
+    <div className="mx-auto max-w-4xl space-y-5">
+      <div><p className="section-kicker">Retailer-specific learning</p><h1 className="page-title mt-1">{t("aliasesTitle")}</h1><p className="mt-1 text-sm text-muted">{t("aliasesSub")}</p></div>
       {retailers.isError && <ErrorState message={errorMessage(retailers.error)} onRetry={() => retailers.refetch()} />}
       <label className="block font-medium">{t("retailer")}
         <select className="input mt-1" value={current ?? ""} onChange={(e) => setRid(Number(e.target.value))}>{retailers.data?.map((r) => <option key={r.id} value={r.id}>{r.name} ({r.code})</option>)}</select></label>
