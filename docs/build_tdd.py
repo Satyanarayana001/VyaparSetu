@@ -154,20 +154,6 @@ S += [
     )
 ]
 
-S += [
-    Spacer(1, 4),
-    P(
-        "<b>Submission note.</b> The GitHub URL above points to the "
-        "public source repository. This document describes the "
-        "implemented application. Features that were not built or "
-        "verified are explicitly identified. Business figures in the "
-        "assignment brief are client-provided context only. The "
-        "application has not been run in production, and no production "
-        "savings or results are claimed.",
-        small,
-    ),
-]
-
 # ---------------------------------------------------------------------
 # 1. Summary
 # ---------------------------------------------------------------------
@@ -176,7 +162,6 @@ S += [
     P("1. Summary", h1),
     P(
         "VyaparSetu is a retailer ordering platform for an FMCG "
-        "distributor serving approximately 1,800 kirana retailers. "
         "Retailers can sign in, browse a product catalogue with "
         "applicable prices, stock and schemes, build a cart, or enter "
         "an order in Hindi, Hinglish or English. They review the "
