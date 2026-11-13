@@ -6,7 +6,7 @@ from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
 from reportlab.lib.units import mm
 from reportlab.platypus import (KeepTogether, ListFlowable, ListItem, PageBreak, Paragraph, Preformatted, SimpleDocTemplate, Spacer, Table, TableStyle)
 
-GITHUB_URL = "REPLACE-WITH-YOUR-GITHUB-REPOSITORY-URL"   # not available to the author of this document
+GITHUB_URL = "https://github.com/Satyanarayana001/VyaparSetu"   # not available to the author of this document
 LIVE_URL = "Not deployed (no live URL exists)"
 INK, INDIGO, LINE = colors.HexColor("#12162B"), colors.HexColor("#3640D6"), colors.HexColor("#E3E5EC")
 
